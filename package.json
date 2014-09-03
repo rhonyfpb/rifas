@@ -21,5 +21,10 @@
   "bugs": {
     "url": "https://github.com/rhonyfpb/rifas/issues"
   },
-  "homepage": "https://github.com/rhonyfpb/rifas"
+  "homepage": "https://github.com/rhonyfpb/rifas",
+  "dependencies": {
+    "express": "^4.8.7",
+    "express-handlebars": "^1.0.1",
+    "socket.io": "^1.0.6"
+  }
 }
