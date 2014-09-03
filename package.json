@@ -1,0 +1,25 @@
+{
+  "name": "rifas",
+  "version": "0.0.1",
+  "description": "Rifas, juegos y espectáculos para todo gusto.",
+  "main": "app.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rhonyfpb/rifas.git"
+  },
+  "keywords": [
+    "rifas",
+    "juegos",
+    "espectaculos"
+  ],
+  "author": "Rhony Pedraza",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rhonyfpb/rifas/issues"
+  },
+  "homepage": "https://github.com/rhonyfpb/rifas"
+}
