@@ -5,6 +5,8 @@ var handlebars = require("express-handlebars").create({
 	defaultLayout: "main"
 });
 
+var secret = require("./secret.js");
+
 var app = express();
 
 app.engine("handlebars", handlebars.engine);
@@ -12,15 +14,18 @@ app.set("view engine", "handlebars");
 
 app.set("port", process.env.PORT || 3000);
 
-// login
+// log
 switch(app.get("env")) {
 	case "development":
 		app.use(require("morgan")("dev"));
 		break;
 }
 
+// static
+app.use(express.static(__dirname + "public"));
+
 // routes
-routes(app);
+routes(app, secret.auth);
 
 // 404 handler
 app.use(function(request, response, next) {
