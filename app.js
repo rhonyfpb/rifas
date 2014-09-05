@@ -4,6 +4,7 @@ var routes = require("./routes.js");
 var handlebars = require("express-handlebars").create({
 	defaultLayout: "main"
 });
+var bodyParser = require("body-parser");
 
 var secret = require("./secret.js");
 
@@ -22,7 +23,11 @@ switch(app.get("env")) {
 }
 
 // static
-app.use(express.static(__dirname + "public"));
+app.use(express.static(__dirname + "/public"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
 
 // routes
 routes(app, secret.auth);
