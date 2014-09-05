@@ -24,10 +24,13 @@ switch(app.get("env")) {
 
 // static
 app.use(express.static(__dirname + "/public"));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
+
+app.use(require("serve-favicon")(__dirname + "/public/img/favicon.ico"));
 
 // routes
 routes(app, secret.auth);

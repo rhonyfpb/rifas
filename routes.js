@@ -26,16 +26,22 @@ module.exports = function(app, auth) {
 	app.post("/admin", authentication, function(request, response) {
 		if(request.xhr) {
 			var data = request.body.nombre;
-			if(data) {
-				var url = "/" + data + "/config";
+			if(/^[-\w]{5,25}$/.test(data)) {
 				response.json({
-					url: url
+					status: "ok",
+					url: "/" + data,
+					config: true
 				});
 			} else {
-				response.send(500, "Nombre no válido.");
+				response.status(500);
+				response.json({
+					status: "error",
+					message: "Nombre no válido; debe ser una cadena entre 5 y 25 caracteres."
+				});
 			}
 		} else {
-			response.send(404, "Manejador no encontrado.");
+			response.status(500);
+			response.send("Manejador no encontrado");
 		}
 	});
 
