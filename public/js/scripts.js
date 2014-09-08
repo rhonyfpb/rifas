@@ -3,18 +3,21 @@ $(document).on("ajaxSend", function() {
 });
 
 $("#crear").on("click", function() {
-	var nombre = $("#nombre").val();
-	if(nombre) {
+	var identificador = $("#identificador").val();
+	if(identificador) {
 		$.ajax({
 			url: "/admin",
 			method: "POST",
 			data: {
-				nombre: nombre
+				identificador: identificador,
+				estado: "inicio"
 			}
 		}).done(function(data) {
 			if(data.status === "ok") {
 				if(data.config === true) {
-
+					$("#grupo-identificador").addClass("not-visible").removeClass("visible");
+					$("#grupo-configuracion").addClass("visible").removeClass("not-visible");
+					$("#identificador-server").text(data.identificador);
 				}
 			}
 		}).fail(function(objError) {
@@ -28,4 +31,49 @@ $("#crear").on("click", function() {
 			}
 		});
 	}
+});
+
+$("#guardar").on("click", function() {
+	var nombre = $("#nombre-largo").val() || "Rifa";
+	var numeros = $("#numeros").val() || "1-30";
+	var plazas = $("#plazas").val() || "1";
+	var ganadores = $("#ganadores").val() || "1";
+	$.ajax({
+		url: "/admin",
+		method: "POST",
+		data: {
+			nombre: nombre,
+			numeros: numeros,
+			plazas: plazas,
+			ganadores: ganadores,
+			estado: "configuracion"
+		}
+	}).done(function(data) {
+		if(data.status === "ok") {
+			if(data.start === true) {
+				$("#grupo-configuracion").addClass("not-visible").removeClass("visible");
+				$("#grupo-confirmacion").addClass("visible").removeClass("not-visible");
+				$("#nombre-server").text(data.nombre);
+				$("#elegibles-server").text(data.elegibles);
+				$("#url-publica").text(data.urlPublica);
+				$("#url-admin").text(data.urlAdmin);
+			}
+		}
+	});
+});
+
+$("#iniciar").on("click", function() {
+	$.ajax({
+		url: "/admin",
+		method: "POST",
+		data: {
+			estado: "iniciar"
+		}
+	}).done(function(data) {
+		if(data.status === "ok") {
+			if(data.init === true) {
+				window.location = data.url;
+			}
+		}
+	});
 });

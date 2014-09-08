@@ -1,20 +1,49 @@
 <h1>Administración de rifas</h1>
 <div class="error not-visible"></div>
-<fieldset id="grupo-nombre" class="visible">
-	<legend>Ingresa el nombre para configurar la rifa</legend>
-	<label for="nombre">Nombre</label>
-	<input id="nombre" type="text" />
-	<button id="crear" type="button">Crear</button>
+<fieldset id="grupo-identificador" class="visible">
+	<legend>Ingresa el identificador para configurar la rifa</legend>
+	<div class="control">
+		<label for="identificador">Identificador</label>
+		<input id="identificador" type="text" />
+	</div>
+	<div class="control">
+		<button id="crear" type="button">Crear</button>
+	</div>
 </fieldset>
 <fieldset id="grupo-configuracion" class="not-visible">
-	<legend>Configuración de la rifa</legend>
-	<label for="nombre-largo">Nombre visible</label>
-	<input id="nombre-largo" type="text" />
-	<label for="numeros">Números permitidos</label>
-	<input id="numeros" type="text" />
-	<label for="plazas">Plazas por persona</label>
-	<input id="plazas" type="text" />
-	<label for="ganadores">Número de ganadores</label>
-	<input id="ganadores" type="text" />
-	<button id="guardar" type="button">Guardar</button>
+	<legend>Configuración de la rifa <span id="identificador-server"></span></legend>
+	<div class="control">
+		<label for="nombre-largo">Nombre visible</label>
+		<input id="nombre-largo" type="text" />
+	</div>
+	<div class="control">
+		<label for="numeros">Números permitidos</label>
+		<input id="numeros" type="text" />
+	</div>
+	<div class="control">
+		<label for="plazas">Plazas por persona</label>
+		<input id="plazas" type="number" min="1" />
+	</div>
+	<div class="control">
+		<label for="ganadores">Número de ganadores</label>
+		<input id="ganadores" type="number" min="1" />
+	</div>
+	<div class="control">
+		<button id="guardar" type="button">Guardar</button>
+	</div>
+</fieldset>
+<fieldset id="grupo-confirmacion" class="not-visible">
+	<legend>Confirmación de la rifa <span id="nombre-server"></span></legend>
+	<div class="control">
+		<span>Se han generado <span id="elegibles-server"></span> números elegibles para la rifa</span>
+	</div>
+	<div class="control">
+		<span>La URL pública que se generará para la rifa es <span id="url-publica"></span></span>
+	</div>
+	<div class="control">
+		<span>La URL de administración que se generará para la rifa es <span id="url-admin"></span></span>
+	</div>
+	<div class="control">
+		<button type="button" id="iniciar">Iniciar rifa</button>
+	</div>
 </fieldset>
