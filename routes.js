@@ -56,13 +56,15 @@ module.exports = function(app, auth) {
 					var numeros = data.numeros;
 					var plazas = data.plazas;
 					var ganadores = data.ganadores;
-					var i = 0, j, n1, n2, num;
+					var i = 0, j, n1, n2, num, resultado = {};
 
 					var arrNumeros = [];
 					numeros = numeros.replace(/\s/g, "").split(",");
 					for(; i<numeros.length; i++) {
 						if(/^\d+$/.test(numeros[i])) {
-							arrNumeros.push(Number(numeros[i]));
+							num = Number(numeros[i]);
+							resultado[num] = { asignado: null };
+							arrNumeros.push(num);
 						} else {
 							if(/^\d+-\d+$/.test(numeros[i])) {
 								num = numeros[i].split("-");
@@ -70,6 +72,7 @@ module.exports = function(app, auth) {
 								n2 = Number(num[1]);
 								if(n1 <= n2) {
 									for(j=n1; j<=n2; j++) {
+										resultado[j] = { asignado: null };
 										arrNumeros.push(j);
 									}
 								}
@@ -82,6 +85,7 @@ module.exports = function(app, auth) {
 					raffle.numeros = arrNumeros;
 					raffle.plazas = plazas;
 					raffle.ganadores = ganadores;
+					raffle.resultado = resultado;
 
 					response.json({
 						urlPublica: raffle.server + raffle.urlPublica,
@@ -94,8 +98,6 @@ module.exports = function(app, auth) {
 					break;
 				case "iniciar":
 					raffle.state = "init";
-
-					// add dynamic route
 
 					response.json({
 						url: raffle.server + raffle.urlAdmin,
@@ -110,6 +112,40 @@ module.exports = function(app, auth) {
 			response.status(500);
 			response.send("Manejador no encontrado");
 		}
+	});
+	
+	app.get("/admin/:id", authentication, function(request, response) {
+		var id = request.params.id;
+		if(raffle.state === "init" && raffle.identificador === id) {
+			response.render("raffle-admin", {
+				nombre: raffle.nombre,
+				identificador: raffle.identificador,
+				urlPublica: raffle.server + raffle.urlPublica,
+				urlAdmin: raffle.server + raffle.urlAdmin,
+				posibles: raffle.numeros.length,
+				plazas: raffle.plazas,
+				ganadores: raffle.ganadores,
+				estado: "esperando",
+				numeros: raffle.numeros,
+				resultado: raffle.resultado,
+				helpers: {
+					increment: function(index) {
+						return typeof index === "number" ? index + 1 : Number(index) + 1;
+					},
+					assign: function(result, number) {
+						var asignado = result[number].asignado;
+						return asignado === null ? "vacío" : asignado;
+					}
+				}
+			});
+		} else {
+			response.status(404);
+			response.render("404");
+		}
+	});
+
+	app.get("/rifa/:id", function(request, response) {
+		//
 	});
 
 };

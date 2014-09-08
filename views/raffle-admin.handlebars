@@ -1,1 +1,70 @@
 <h1>Administrador de la rifa</h1>
+<fieldset>
+	<legend>Datos de la rifa</legend>
+	<div class="control">
+		<span class="key">Nombre de la rifa:</span>
+		<span class="value">{{nombre}}</span>
+	</div>
+	<div class="control">
+		<span class="key">Identificador de la rifa:</span>
+		<span class="value">{{identificador}}</span>
+	</div>
+	<div class="control">
+		<span class="key">URL pública:</span>
+		<span class="value">{{urlPublica}}</span>
+	</div>
+	<div class="control">
+		<span class="key">URL administrativa:</span>
+		<span class="value">{{urlAdmin}}</span>
+	</div>
+	<div class="control">
+		<span class="key">Números posibles:</span>
+		<span class="value">{{posibles}}</span>
+	</div>
+	<div class="control">
+		<span class="key">Plazas por persona:</span>
+		<span class="value">{{plazas}}</span>
+	</div>
+	<div class="control">
+		<span class="key">Número de ganadores:</span>
+		<span class="value">{{ganadores}}</span>
+	</div>
+</fieldset>
+<fieldset>
+	<legend>Control de la rifa</legend>
+	<div class="control" id="estado">
+		<span class="key">Estado de la rifa:</span>
+		<span class="value">{{estado}}</span>
+	</div>
+	<div class="control" id="abrir">
+		<button type="button">Abrir</button>
+	</div>
+	<div class="control" id="cerrar">
+		<button type="button">Cerrar</button>
+	</div>
+	<div class="control" id="modificar">
+		<button type="button">Modificar</button>
+		<label for="numero">Numero</label>
+		<input id="numero" type="number" />
+		<label for="asignado">Asignado</label>
+		<input id="asignado" type="text" />
+	</div>
+	<div class="control" id="bloquear">
+		<button type="button">Bloquear</button>
+	</div>
+	<div class="control" id="generar">
+		<button type="button">Generar número</button>
+	</div>
+</fieldset>
+<fieldset>
+	<legend>Números</legend>
+	<div class="resultados">
+	{{#each numeros}}
+		<div class="num" id="{{this}}">
+			<span class="pos">{{increment @index}}</span>
+			<span class="number">{{this}}</span>
+			<span class="assign">{{assign ../resultado this}}</span>
+		</div>
+	{{/each}}
+	</div>
+</fieldset>
