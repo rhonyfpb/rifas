@@ -38,6 +38,7 @@ module.exports = function(app, auth) {
 						raffle.identificador = identificador;
 						raffle.urlPublica = "/rifa/" + identificador;
 						raffle.urlAdmin = "/admin/" + identificador;
+						raffle.listaGanadores = {};
 						response.json({
 							identificador: identificador,
 							status: "ok",
@@ -117,6 +118,7 @@ module.exports = function(app, auth) {
 	app.get("/admin/:id", authentication, function(request, response) {
 		var id = request.params.id;
 		if(raffle.state === "init" && raffle.identificador === id) {
+			raffle.state = "waiting";
 			response.render("raffle-admin", {
 				nombre: raffle.nombre,
 				identificador: raffle.identificador,
@@ -125,7 +127,7 @@ module.exports = function(app, auth) {
 				posibles: raffle.numeros.length,
 				plazas: raffle.plazas,
 				ganadores: raffle.ganadores,
-				estado: "esperando",
+				estado: raffle.state,
 				numeros: raffle.numeros,
 				resultado: raffle.resultado,
 				helpers: {
@@ -135,6 +137,9 @@ module.exports = function(app, auth) {
 					assign: function(result, number) {
 						var asignado = result[number].asignado;
 						return asignado === null ? "vacío" : asignado;
+					},
+					state: function(estado) {
+						return estado === "waiting" ? "esperando" : "";
 					}
 				}
 			});
@@ -145,7 +150,13 @@ module.exports = function(app, auth) {
 	});
 
 	app.get("/rifa/:id", function(request, response) {
-		//
+		var id = request.params.id;
+		if(raffle.state === "waiting" && raffle.identificador === id) {
+			//
+		} else {
+			response.status(404);
+			response.render("404");
+		}
 	});
 
 };
