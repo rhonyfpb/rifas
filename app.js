@@ -1,6 +1,8 @@
 var http = require("http");
 var express = require("express");
 var routes = require("./routes.js");
+var io = require("socket.io");
+var server;
 var handlebars = require("express-handlebars").create({
 	defaultLayout: "main"
 });
@@ -14,6 +16,15 @@ app.engine("handlebars", handlebars.engine);
 app.set("view engine", "handlebars");
 
 app.set("port", process.env.PORT || 3000);
+
+
+server = http.createServer(app).listen(app.get("port"), function() {
+	console.log("Application started in " + app.get("env") + " mode on http://localhost:" + app.get("port") + "; press Ctrl-C to terminate.");
+});
+
+// socket.io
+io = io.listen(server);
+
 
 // log
 switch(app.get("env")) {
@@ -33,7 +44,7 @@ app.use(bodyParser.urlencoded({
 app.use(require("serve-favicon")(__dirname + "/public/img/favicon.ico"));
 
 // routes
-routes(app, secret.auth);
+routes(app, secret.auth, io);
 
 // 404 handler
 app.use(function(request, response, next) {
@@ -46,8 +57,4 @@ app.use(function(error, request, response, next) {
 	console.error(error.stack);
 	response.status(500);
 	response.render("500");
-});
-
-http.createServer(app).listen(app.get("port"), function() {
-	console.log("Application started in " + app.get("env") + " mode on http://localhost:" + app.get("port") + "; press Ctrl-C to terminate.");
 });

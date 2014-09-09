@@ -1,6 +1,17 @@
-module.exports = function(app, auth) {
+module.exports = function(app, auth, io) {
 
 	var raffle = {};
+
+	var connection = function(socket) {
+		
+		socket.on("status change", function(status) {
+			if(status === "abrir") {
+				raffle.state = "open";
+				io.emit("status change", status);
+			}
+		});
+
+	};
 
 	var authentication = function(request, response, next) {
 		var credentials = require("basic-auth")(request);
@@ -64,7 +75,7 @@ module.exports = function(app, auth) {
 					for(; i<numeros.length; i++) {
 						if(/^\d+$/.test(numeros[i])) {
 							num = Number(numeros[i]);
-							resultado[num] = { asignado: null };
+							resultado[num] = { asignado: "Rhony" };
 							arrNumeros.push(num);
 						} else {
 							if(/^\d+-\d+$/.test(numeros[i])) {
@@ -118,6 +129,7 @@ module.exports = function(app, auth) {
 	app.get("/admin/:id", authentication, function(request, response) {
 		var id = request.params.id;
 		if(raffle.state === "init" && raffle.identificador === id) {
+			io.sockets.on("connection", connection);
 			raffle.state = "waiting";
 			response.render("raffle-admin", {
 				nombre: raffle.nombre,
@@ -151,8 +163,35 @@ module.exports = function(app, auth) {
 
 	app.get("/rifa/:id", function(request, response) {
 		var id = request.params.id;
-		if(raffle.state === "waiting" && raffle.identificador === id) {
-			//
+		if((raffle.state === "waiting" || raffle.state === "open") && raffle.identificador === id) {
+			io.sockets.on("connection", connection);
+			response.render("raffle-user", {
+				numeros: raffle.numeros,
+				resultado: raffle.resultado,
+				estado: raffle.state,
+				helpers: {
+					increment: function(index) {
+						return typeof index === "number" ? index + 1 : Number(index) + 1;
+					},
+					assign: function(result, number) {
+						var asignado = result[number].asignado;
+						return asignado === null ? "vacío" : asignado;
+					},
+					state: function(estado) {
+						if(estado === "waiting") {
+							return "esperando";
+						} else if(estado === "open") {
+							return "abierta";
+						} else {
+							return "";
+						}
+					},
+					notEmpty: function(result, number) {
+						var asignado = result[number].asignado;
+						return asignado === null ? "" : " disabled=\"disabled\"";
+					}
+				}
+			});
 		} else {
 			response.status(404);
 			response.render("404");

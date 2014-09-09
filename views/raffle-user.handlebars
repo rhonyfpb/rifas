@@ -1,0 +1,28 @@
+<script src="../socket.io/socket.io.js"></script>
+<fieldset>
+	<legend>Acciones de la rifa</legend>
+	<div class="control" id="estado">
+		<span class="key">Estado de la rifa:</span>
+		<span class="value">{{state estado}}</span>
+	</div>
+	<div class="control">
+		<label for="seleccion">Selección</label>
+		<select id="seleccion">
+		{{#each numeros}}
+			<option value="{{this}}"{{notEmpty ../resultado this}}>{{this}}</option>
+		{{/each}}
+		</select>
+		<label for="asignado">Asignado</label>
+		<input id="asignado" type="text" />
+	</div>
+</fieldset>
+{{> numbers}}
+<script>
+	var socket = io.connect("/");
+
+	socket.on("status change", function(status) {
+		if(status === "abrir") {
+			$("#estado .value").text("abierta");
+		}
+	});
+</script>

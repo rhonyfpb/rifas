@@ -1,3 +1,4 @@
+<script src="../socket.io/socket.io.js"></script>
 <h1>Administrador de la rifa</h1>
 <fieldset>
 	<legend>Datos de la rifa</legend>
@@ -37,34 +38,40 @@
 		<span class="value">{{state estado}}</span>
 	</div>
 	<div class="control" id="abrir">
-		<button type="button">Abrir</button>
+		<button type="button">Abrir ingreso de números</button>
 	</div>
 	<div class="control" id="cerrar">
-		<button type="button">Cerrar</button>
+		<button type="button" disabled="disabled">Cerrar ingreso de números</button>
 	</div>
 	<div class="control" id="modificar">
-		<button type="button">Modificar</button>
+		<button type="button" disabled="disabled">Modificar número</button>
 		<label for="numero">Numero</label>
-		<input id="numero" type="number" />
+		<input id="numero" type="number" disabled="disabled" />
 		<label for="asignado">Asignado</label>
-		<input id="asignado" type="text" />
+		<input id="asignado" type="text" disabled="disabled" />
 	</div>
 	<div class="control" id="bloquear">
-		<button type="button">Bloquear</button>
+		<button type="button" disabled="disabled">Bloquear rifa</button>
 	</div>
 	<div class="control" id="generar">
-		<button type="button">Generar número</button>
+		<button type="button" disabled="disabled">Generar número</button>
 	</div>
 </fieldset>
-<fieldset>
-	<legend>Números</legend>
-	<div class="resultados">
-	{{#each numeros}}
-		<div class="num" id="{{this}}">
-			<span class="pos">{{increment @index}}</span>
-			<span class="number">{{this}}</span>
-			<span class="assign">{{assign ../resultado this}}</span>
-		</div>
-	{{/each}}
-	</div>
-</fieldset>
+{{> numbers}}
+<script>
+	var socket = io.connect("/");
+
+	$("#abrir button").on("click", function() {
+		socket.emit("status change", "abrir");
+	});
+
+	socket.on("status change", function(status) {
+		if(status === "abrir") {
+			$("#estado .value").text("abierta");
+			$("#abrir button").attr("disabled", "disabled");
+			$("#cerrar button").removeAttr("disabled");
+			$("#modificar button").removeAttr("disabled");
+			$("#bloquear button").removeAttr("disabled");
+		}
+	});
+</script>

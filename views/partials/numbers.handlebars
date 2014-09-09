@@ -1,0 +1,12 @@
+<fieldset>
+	<legend>Números</legend>
+	<div class="resultados">
+	{{#each numeros}}
+		<div class="num" id="{{this}}">
+			<span class="pos">{{increment @index}}</span>
+			<span class="number">{{this}}</span>
+			<span class="assign">{{assign ../resultado this}}</span>
+		</div>
+	{{/each}}
+	</div>
+</fieldset>
