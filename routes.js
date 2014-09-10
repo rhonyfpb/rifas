@@ -11,6 +11,13 @@ module.exports = function(app, auth, io) {
 			}
 		});
 
+		socket.on("number change", function(number, assigned) {
+			if(raffle.resultado[number].asignado === null) {
+				raffle.resultado[number].asignado = assigned;
+				io.emit("number change", number, assigned);
+			}
+		});
+
 	};
 
 	var authentication = function(request, response, next) {
@@ -26,10 +33,6 @@ module.exports = function(app, auth, io) {
 
 	app.get("/", function(request, response) {
 		response.render("home");
-	});
-
-	app.get("/user", function(request, response) {
-		//response.render("home");
 	});
 
 	app.get("/admin", authentication, function(request, response) {

@@ -46,6 +46,14 @@
 	$("#asignar").on("click", function() {
 		var seleccion = $("#seleccion").val();
 		var asignado = $("#asignado").val();
+		if(seleccion && asignado) {
+			socket.emit("number change", Number(seleccion), asignado);
+		}
+	});
+
+	socket.on("number change", function(numero, asignado) {
+		$("#" + numero + " .assign").text(asignado);
+		$("#seleccion option[value=" + numero + "]").attr("disabled", "disabled");
 	});
 
 	socket.on("status change", function(status) {

@@ -50,9 +50,6 @@
 		<label for="asignado">Asignado</label>
 		<input id="asignado" type="text" disabled="disabled" />
 	</div>
-	<div class="control" id="bloquear">
-		<button type="button" disabled="disabled">Bloquear rifa</button>
-	</div>
 	<div class="control" id="generar">
 		<button type="button" disabled="disabled">Generar número</button>
 	</div>
@@ -65,13 +62,16 @@
 		socket.emit("status change", "abrir");
 	});
 
+	socket.on("number change", function(numero, asignado) {
+		$("#" + numero + " .assign").text(asignado);
+	});
+
 	socket.on("status change", function(status) {
 		if(status === "abrir") {
 			$("#estado .value").text("abierta");
 			$("#abrir button").attr("disabled", "disabled");
 			$("#cerrar button").removeAttr("disabled");
 			$("#modificar button").removeAttr("disabled");
-			$("#bloquear button").removeAttr("disabled");
 		}
 	});
 </script>
