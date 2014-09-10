@@ -75,7 +75,7 @@ module.exports = function(app, auth, io) {
 					for(; i<numeros.length; i++) {
 						if(/^\d+$/.test(numeros[i])) {
 							num = Number(numeros[i]);
-							resultado[num] = { asignado: "Rhony" };
+							resultado[num] = { asignado: null };
 							arrNumeros.push(num);
 						} else {
 							if(/^\d+-\d+$/.test(numeros[i])) {
@@ -169,6 +169,8 @@ module.exports = function(app, auth, io) {
 				numeros: raffle.numeros,
 				resultado: raffle.resultado,
 				estado: raffle.state,
+				isWaiting: raffle.state === "waiting" ? true : false,
+				isOpen: raffle.state === "open" ? true : false,
 				helpers: {
 					increment: function(index) {
 						return typeof index === "number" ? index + 1 : Number(index) + 1;

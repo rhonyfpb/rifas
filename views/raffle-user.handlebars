@@ -1,4 +1,25 @@
 <script src="../socket.io/socket.io.js"></script>
+{{#if isWaiting}}
+<fieldset>
+	<legend>Acciones de la rifa</legend>
+	<div class="control" id="estado">
+		<span class="key">Estado de la rifa:</span>
+		<span class="value">{{state estado}}</span>
+	</div>
+	<div class="control">
+		<label for="seleccion">Selección</label>
+		<select id="seleccion" disabled="disabled">
+		{{#each numeros}}
+			<option value="{{this}}"{{notEmpty ../resultado this}}>{{this}}</option>
+		{{/each}}
+		</select>
+		<label for="asignado">Asignado</label>
+		<input id="asignado" type="text" disabled="disabled" />
+		<button id="asignar" disabled="disabled">Asignar</button>
+	</div>
+</fieldset>
+{{/if}}
+{{#if isOpen}}
 <fieldset>
 	<legend>Acciones de la rifa</legend>
 	<div class="control" id="estado">
@@ -14,15 +35,25 @@
 		</select>
 		<label for="asignado">Asignado</label>
 		<input id="asignado" type="text" />
+		<button id="asignar">Asignar</button>
 	</div>
 </fieldset>
+{{/if}}
 {{> numbers}}
 <script>
 	var socket = io.connect("/");
 
+	$("#asignar").on("click", function() {
+		var seleccion = $("#seleccion").val();
+		var asignado = $("#asignado").val();
+	});
+
 	socket.on("status change", function(status) {
 		if(status === "abrir") {
 			$("#estado .value").text("abierta");
+			$("#seleccion").removeAttr("disabled");
+			$("#asignado").removeAttr("disabled");
+			$("#asignar").removeAttr("disabled");
 		}
 	});
 </script>
