@@ -4,6 +4,7 @@ $(document).ready(function() {
 		$(".error").addClass("not-visible").removeClass("visible").text("");
 	});
 
+	// IDENTIFICADOR
 	$("#crear").on("click", function() {
 		var identificador = $("#identificador").val();
 		if(identificador) {
@@ -35,10 +36,10 @@ $(document).ready(function() {
 		}
 	});
 
+	// CONFIGURACION
 	$("#guardar").on("click", function() {
 		var nombre = $("#nombre-largo").val() || "Rifa";
 		var numeros = $("#numeros").val() || "1-30";
-		var plazas = $("#plazas").val() || "1";
 		var ganadores = $("#ganadores").val() || "1";
 		$.ajax({
 			url: "/admin",
@@ -46,7 +47,6 @@ $(document).ready(function() {
 			data: {
 				nombre: nombre,
 				numeros: numeros,
-				plazas: plazas,
 				ganadores: ganadores,
 				estado: "configuracion"
 			}
@@ -64,6 +64,7 @@ $(document).ready(function() {
 		});
 	});
 
+	// CONFIRMACION
 	$("#iniciar").on("click", function() {
 		$.ajax({
 			url: "/admin",

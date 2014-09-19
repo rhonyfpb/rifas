@@ -23,10 +23,6 @@
 		<span class="value">{{posibles}}</span>
 	</div>
 	<div class="control">
-		<span class="key">Plazas por persona:</span>
-		<span class="value">{{plazas}}</span>
-	</div>
-	<div class="control">
 		<span class="key">Número de ganadores:</span>
 		<span class="value">{{ganadores}}</span>
 	</div>
@@ -62,6 +58,10 @@
 		socket.emit("status change", "abrir");
 	});
 
+	$("#cerrar button").on("click", function() {
+		socket.emit("status change", "cerrar");
+	});
+
 	socket.on("number change", function(numero, asignado) {
 		$("#" + numero + " .assign").text(asignado);
 	});
@@ -72,6 +72,10 @@
 			$("#abrir button").attr("disabled", "disabled");
 			$("#cerrar button").removeAttr("disabled");
 			$("#modificar button").removeAttr("disabled");
+		} else if(status === "cerrar") {
+			$("#estado .value").text("cerrada");
+			$("#cerrar button").attr("disabled", "disabled");
+			$("#generar button").removeAttr("disabled");
 		}
 	});
 </script>

@@ -8,6 +8,9 @@ module.exports = function(app, auth, io) {
 			if(status === "abrir") {
 				raffle.state = "open";
 				io.emit("status change", status);
+			} else if(status === "cerrar") {
+				raffle.state = "sealed";
+				io.emit("status change", status);
 			}
 		});
 
@@ -69,7 +72,6 @@ module.exports = function(app, auth, io) {
 				case "configuracion":
 					var nombre = data.nombre;
 					var numeros = data.numeros;
-					var plazas = data.plazas;
 					var ganadores = data.ganadores;
 					var i = 0, j, n1, n2, num, resultado = {};
 
@@ -98,7 +100,6 @@ module.exports = function(app, auth, io) {
 					raffle.state = "config";
 					raffle.nombre = nombre;
 					raffle.numeros = arrNumeros;
-					raffle.plazas = plazas;
 					raffle.ganadores = ganadores;
 					raffle.resultado = resultado;
 
@@ -140,7 +141,6 @@ module.exports = function(app, auth, io) {
 				urlPublica: raffle.server + raffle.urlPublica,
 				urlAdmin: raffle.server + raffle.urlAdmin,
 				posibles: raffle.numeros.length,
-				plazas: raffle.plazas,
 				ganadores: raffle.ganadores,
 				estado: raffle.state,
 				numeros: raffle.numeros,
@@ -166,7 +166,7 @@ module.exports = function(app, auth, io) {
 
 	app.get("/rifa/:id", function(request, response) {
 		var id = request.params.id;
-		if((raffle.state === "waiting" || raffle.state === "open") && raffle.identificador === id) {
+		if((raffle.state === "waiting" || raffle.state === "open" || raffle.state === "sealed") && raffle.identificador === id) {
 			io.sockets.on("connection", connection);
 			response.render("raffle-user", {
 				numeros: raffle.numeros,
