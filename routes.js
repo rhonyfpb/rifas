@@ -80,8 +80,8 @@ module.exports = function(app, auth, io) {
 					for(; i<numeros.length; i++) {
 						if(/^\d+$/.test(numeros[i])) {
 							num = Number(numeros[i]);
-							resultado[num] = { asignado: null };
-							arrNumeros.push(num);
+							resultado[num.toString()] = { asignado: null };
+							arrNumeros.push(num.toString());
 						} else {
 							if(/^\d+-\d+$/.test(numeros[i])) {
 								num = numeros[i].split("-");
@@ -89,8 +89,8 @@ module.exports = function(app, auth, io) {
 								n2 = Number(num[1]);
 								if(n1 <= n2) {
 									for(j=n1; j<=n2; j++) {
-										resultado[j] = { asignado: null };
-										arrNumeros.push(j);
+										resultado[j.toString()] = { asignado: null };
+										arrNumeros.push(j.toString());
 									}
 								}
 							}
@@ -172,28 +172,38 @@ module.exports = function(app, auth, io) {
 				numeros: raffle.numeros,
 				resultado: raffle.resultado,
 				estado: raffle.state,
-				isWaiting: raffle.state === "waiting" ? true : false,
-				isOpen: raffle.state === "open" ? true : false,
 				helpers: {
 					increment: function(index) {
 						return typeof index === "number" ? index + 1 : Number(index) + 1;
 					},
 					assign: function(result, number) {
-						var asignado = result[number].asignado;
-						return asignado === null ? "vacío" : asignado;
+						var asignado;
+						if(result[number]) {
+							asignado = result[number].asignado;
+							return asignado === null ? "vacío" : asignado;
+						} else {
+							return "vacío";
+						}
 					},
 					state: function(estado) {
 						if(estado === "waiting") {
 							return "esperando";
 						} else if(estado === "open") {
 							return "abierta";
+						} else if(estado === "sealed") {
+							return "cerrada";
 						} else {
 							return "";
 						}
 					},
 					notEmpty: function(result, number) {
-						var asignado = result[number].asignado;
-						return asignado === null ? "" : " disabled=\"disabled\"";
+						var asignado;
+						if(result[number]) {
+							asignado = result[number].asignado;
+							return asignado === null ? "" : " disabled=\"disabled\"";
+						} else {
+							return "";
+						}
 					}
 				}
 			});

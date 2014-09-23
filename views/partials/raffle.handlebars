@@ -1,0 +1,25 @@
+<fieldset>
+	<legend>Acciones de la rifa</legend>
+	<div class="control" id="estado">
+		<span class="key">Estado de la rifa:</span>
+		<span class="value">{{state estado}}</span>
+	</div>
+	<div class="control">
+		<label for="seleccion">Selección</label>
+		<select id="seleccion">
+		{{#each numeros}}
+			<option value="{{this}}" {{#notEmpty ../resultado this}} {{/notEmpty}} >{{this}}</option>
+		{{/each}}
+		</select>
+		<label for="asignado">Asignado</label>
+		<input id="asignado" type="text" />
+		<button id="asignar">Asignar</button>
+	</div>
+</fieldset>
+<fieldset id="grupo-visualizacion">
+	<legend>Visualización de números ganadores</legend>
+	<div class="lista-numeros">
+		<div class="numero"></div>
+		<div class="lista"></div>
+	</div>
+</fieldset>

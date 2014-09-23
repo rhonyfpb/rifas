@@ -1,52 +1,8 @@
 <script src="../socket.io/socket.io.js"></script>
-{{#if isWaiting}}
-<fieldset>
-	<legend>Acciones de la rifa</legend>
-	<div class="control" id="estado">
-		<span class="key">Estado de la rifa:</span>
-		<span class="value">{{state estado}}</span>
-	</div>
-	<div class="control">
-		<label for="seleccion">Selección</label>
-		<select id="seleccion" disabled="disabled">
-		{{#each numeros}}
-			<option value="{{this}}"{{notEmpty ../resultado this}}>{{this}}</option>
-		{{/each}}
-		</select>
-		<label for="asignado">Asignado</label>
-		<input id="asignado" type="text" disabled="disabled" />
-		<button id="asignar" disabled="disabled">Asignar</button>
-	</div>
-</fieldset>
-{{/if}}
-{{#if isOpen}}
-<fieldset>
-	<legend>Acciones de la rifa</legend>
-	<div class="control" id="estado">
-		<span class="key">Estado de la rifa:</span>
-		<span class="value">{{state estado}}</span>
-	</div>
-	<div class="control">
-		<label for="seleccion">Selección</label>
-		<select id="seleccion">
-		{{#each numeros}}
-			<option value="{{this}}" {{notEmpty ../resultado this}}>{{this}}</option>
-		{{/each}}
-		</select>
-		<label for="asignado">Asignado</label>
-		<input id="asignado" type="text" />
-		<button id="asignar">Asignar</button>
-	</div>
-</fieldset>
-{{/if}}
-<fieldset id="grupo-visualizacion" class="not-visible">
-	<legend>Visualización de números ganadores</legend>
-	<div class="lista-numeros">
-		<div class="numero"></div>
-		<div class="lista"></div>
-	</div>
-</fieldset>
-{{> numbers}}
+<div id="contenedor-rifa" class="{{state estado}}">
+	{{> raffle}}
+	{{> numbers}}
+</div>
 <script>
 	var socket = io.connect("/");
 
@@ -65,16 +21,32 @@
 
 	socket.on("status change", function(status) {
 		if(status === "abrir") {
+			$("#contenedor-rifa").removeClass().addClass("abierta");
 			$("#estado .value").text("abierta");
-			$("#seleccion").removeAttr("disabled");
-			$("#asignado").removeAttr("disabled");
-			$("#asignar").removeAttr("disabled");
+			$("#seleccion").closest(".control").addClass("visible").removeClass("not-visible");
 		} else if(status === "cerrar") {
+			$("#contenedor-rifa").removeClass().addClass("cerrada");
 			$("#estado .value").text("cerrada");
+			$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
 			$("#grupo-visualizacion").addClass("visible").removeClass("not-visible");
-			$("#seleccion").attr("disabled", "disabled");
-			$("#asignado").attr("disabled", "disabled");
-			$("#asignar").attr("disabled", "disabled");
 		}
+	});
+
+	$(document).ready(function() {
+
+		var containerClass = $("#contenedor-rifa").attr("class");
+		switch(containerClass) {
+			case "esperando":
+				$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
+				$("#grupo-visualizacion").addClass("not-visible").removeClass("visible");
+				break;
+			case "abierta":
+				$("#grupo-visualizacion").addClass("not-visible").removeClass("visible");
+				break;
+			case "cerrada":
+				$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
+				break;
+		}
+
 	});
 </script>
