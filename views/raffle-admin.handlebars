@@ -40,19 +40,27 @@
 		<button type="button" disabled="disabled">Cerrar ingreso de números</button>
 	</div>
 	<div class="control" id="modificar">
-		<button type="button" disabled="disabled">Modificar número</button>
-		<label for="numero">Numero</label>
+		<label for="numero">Número</label>
 		<input id="numero" type="number" disabled="disabled" />
 		<label for="asignado">Asignado</label>
 		<input id="asignado" type="text" disabled="disabled" />
+		<button type="button" disabled="disabled">Modificar número</button>
+	</div>
+	<div class="control" id="pagar">
+		<label for="pagado">Número</label>
+		<input id="pagado" type="number" disabled="disabled" />
+		<button type="button" disabled="disabled">Pagar</button>
 	</div>
 	<div class="control" id="generar">
+	{{#makeInputs ganadores}} {{/makeInputs}}
 		<button type="button" disabled="disabled">Generar número</button>
 	</div>
 </fieldset>
 {{> numbers}}
 <script>
-	var socket = io.connect("/");
+	var socket = io.connect("/", {
+		reconnection: false
+	});
 
 	$("#abrir button").on("click", function() {
 		socket.emit("status change", "abrir");
@@ -62,8 +70,46 @@
 		socket.emit("status change", "cerrar");
 	});
 
+	$("#modificar button").on("click", function() {
+		var numeroCtrl = $("#numero");
+		var asignadoCtrl = $("#asignado");
+		var numero = numeroCtrl.val();
+		var asignado = asignadoCtrl.val();
+		if(numero && asignado) {
+			$("#modificar button, #modificar input").attr("disabled", "disabled");
+			socket.emit("admin number change", numero, asignado);
+		}
+	});
+
+	$("#pagar button").on("click", function() {
+		var numeroCtrl = $("#pagado");
+		var numero = numeroCtrl.val();
+		if(numero) {
+			$("#pagar button, #pagar input").attr("disabled", "disabled");
+			socket.emit("number payment", numero);
+		}
+	});
+
+	$("#generar button").on("click", function() {
+		$("#modificar button, #modificar input").attr("disabled", "disabled");
+		$("#pagar button, #pagar input").attr("disabled", "disabled");
+		socket.emit("generate number");
+	});
+
 	socket.on("number change", function(numero, asignado) {
 		$("#" + numero + " .assign").text(asignado);
+	});
+
+	socket.on("admin number change", function(numero, asignado) {
+		$("#numero").val("");
+		$("#asignado").val("");
+		$("#modificar button, #modificar input").removeAttr("disabled");
+	});
+
+	socket.on("number payment", function(numero) {
+		$("#" + numero + " .payment").text("pagado");
+		$("#pagado").val("");
+		$("#pagar button, #pagar input").removeAttr("disabled");
 	});
 
 	socket.on("status change", function(status) {
@@ -71,11 +117,14 @@
 			$("#estado .value").text("abierta");
 			$("#abrir button").attr("disabled", "disabled");
 			$("#cerrar button").removeAttr("disabled");
-			$("#modificar button").removeAttr("disabled");
+			$("#modificar button, #modificar input").removeAttr("disabled");
+			$("#pagar button, #pagar input").removeAttr("disabled");
 		} else if(status === "cerrar") {
 			$("#estado .value").text("cerrada");
 			$("#cerrar button").attr("disabled", "disabled");
 			$("#generar button").removeAttr("disabled");
+		} else if(status === "generando") {
+			$("#estado .value").text("generando");
 		}
 	});
 </script>

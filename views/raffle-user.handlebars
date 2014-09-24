@@ -4,19 +4,25 @@
 	{{> numbers}}
 </div>
 <script>
-	var socket = io.connect("/");
+	var socket = io.connect("/", {
+		reconnection: false
+	});
 
 	$("#asignar").on("click", function() {
 		var seleccion = $("#seleccion").val();
 		var asignado = $("#asignado").val();
 		if(seleccion && asignado) {
-			socket.emit("number change", Number(seleccion), asignado);
+			socket.emit("number change", seleccion, asignado);
 		}
 	});
 
 	socket.on("number change", function(numero, asignado) {
 		$("#" + numero + " .assign").text(asignado);
 		$("#seleccion option[value=" + numero + "]").attr("disabled", "disabled");
+	});
+
+	socket.on("number payment", function(numero) {
+		$("#" + numero + " .payment").text("pagado");
 	});
 
 	socket.on("status change", function(status) {
@@ -29,6 +35,8 @@
 			$("#estado .value").text("cerrada");
 			$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
 			$("#grupo-visualizacion").addClass("visible").removeClass("not-visible");
+		} else if(status === "generando") {
+			$("#estado .value").text("generando");
 		}
 	});
 

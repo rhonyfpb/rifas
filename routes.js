@@ -21,6 +21,26 @@ module.exports = function(app, auth, io) {
 			}
 		});
 
+		socket.on("admin number change", function(number, assigned) {
+			raffle.resultado[number].asignado = assigned;
+			io.emit("number change", number, assigned);
+			io.emit("admin number change");
+		});
+
+		socket.on("number payment", function(number) {
+			if(raffle.resultado[number].pagado === false) {
+				raffle.resultado[number].pagado = true;
+				io.emit("number payment", number);
+			}
+		});
+
+		socket.on("generate number", function() {
+			if(raffle.state !== "generating") {
+				raffle.state = "generating";
+				io.emit("status change", "generando");
+			}
+		});
+
 	};
 
 	var authentication = function(request, response, next) {
@@ -80,7 +100,7 @@ module.exports = function(app, auth, io) {
 					for(; i<numeros.length; i++) {
 						if(/^\d+$/.test(numeros[i])) {
 							num = Number(numeros[i]);
-							resultado[num.toString()] = { asignado: null };
+							resultado[num.toString()] = { asignado: null, pagado: false };
 							arrNumeros.push(num.toString());
 						} else {
 							if(/^\d+-\d+$/.test(numeros[i])) {
@@ -89,7 +109,7 @@ module.exports = function(app, auth, io) {
 								n2 = Number(num[1]);
 								if(n1 <= n2) {
 									for(j=n1; j<=n2; j++) {
-										resultado[j.toString()] = { asignado: null };
+										resultado[j.toString()] = { asignado: null, pagado: false };
 										arrNumeros.push(j.toString());
 									}
 								}
@@ -150,11 +170,33 @@ module.exports = function(app, auth, io) {
 						return typeof index === "number" ? index + 1 : Number(index) + 1;
 					},
 					assign: function(result, number) {
-						var asignado = result[number].asignado;
-						return asignado === null ? "vacío" : asignado;
+						var asignado;
+						if(result[number]) {
+							asignado = result[number].asignado;
+							return asignado === null ? "vacío" : asignado;
+						} else {
+							return "vacío";
+						}
 					},
 					state: function(estado) {
 						return estado === "waiting" ? "esperando" : "";
+					},
+					payment: function(result, number) {
+						var pagado;
+						if(result[number]) {
+							pagado = result[number].pagado;
+							return pagado ? "pagado" : "no pagado";
+						} else {
+							return "no pagado";
+						}
+					},
+					makeInputs: function(ganadores) {
+						var i = 0;
+						var result = "";
+						for(; i < ganadores; i++) {
+							result += "<input id=\"w" + (i+1) + "\" type=\"number\" disabled=\"disabled\" /> ";
+						}
+						return result;
 					}
 				}
 			});
@@ -166,7 +208,7 @@ module.exports = function(app, auth, io) {
 
 	app.get("/rifa/:id", function(request, response) {
 		var id = request.params.id;
-		if((raffle.state === "waiting" || raffle.state === "open" || raffle.state === "sealed") && raffle.identificador === id) {
+		if((raffle.state === "waiting" || raffle.state === "open" || raffle.state === "sealed" || raffle.state === "generating") && raffle.identificador === id) {
 			io.sockets.on("connection", connection);
 			response.render("raffle-user", {
 				numeros: raffle.numeros,
@@ -192,6 +234,8 @@ module.exports = function(app, auth, io) {
 							return "abierta";
 						} else if(estado === "sealed") {
 							return "cerrada";
+						} else if(estado === "generating") {
+							return "generando";
 						} else {
 							return "";
 						}
@@ -203,6 +247,15 @@ module.exports = function(app, auth, io) {
 							return asignado === null ? "" : " disabled=\"disabled\"";
 						} else {
 							return "";
+						}
+					},
+					payment: function(result, number) {
+						var pagado;
+						if(result[number]) {
+							pagado = result[number].pagado;
+							return pagado ? "pagado" : "no pagado";
+						} else {
+							return "no pagado";
 						}
 					}
 				}

@@ -3,9 +3,10 @@
 	<div class="resultados">
 	{{#each numeros}}
 		<div class="num" id="{{this}}">
-			<span class="pos">{{increment @index}}</span>
+			<span class="pos">{{#increment @index}} {{/increment}}</span>
 			<span class="number">{{this}}</span>
-			<span class="assign">{{assign ../resultado this}}</span>
+			<span class="assign">{{#assign ../resultado this}} {{/assign}}</span>
+			<span class="payment">{{#payment ../resultado this}} {{/payment}}</span>
 		</div>
 	{{/each}}
 	</div>
