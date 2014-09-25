@@ -35,12 +35,48 @@ module.exports = function(app, auth, io) {
 		});
 
 		socket.on("generate number", function() {
+			var position, number, i = 0, result = {}, validate = [], contExt = true, contInt;
 			if(raffle.state !== "generating") {
 				raffle.state = "generating";
 				io.emit("status change", "generando");
 			}
+			result = makeResult();
+			if(result.winner !== undefined) {
+				io.emit("generate number", result.winner, result.fakes);
+			}
 		});
 
+	};
+
+	var makeResult = function() {
+		var result = {}, contExt = true, position, number;
+		if(raffle.elegidos.length < Number(raffle.ganadores)) {
+			while(contExt) {
+				position = generateNumber(0, raffle.numeros.length);
+				number = raffle.numeros[position];
+				if(raffle.elegidos.indexOf(number) === -1) {
+					raffle.elegidos.push(number);
+					raffle.resultado[number].ganador = true;
+					result.winner = number;
+					result.fakes = [];
+					contInt = 2;
+					while(contInt > 0) {
+						position = generateNumber(0, raffle.numeros.length);
+						number = raffle.numeros[position];
+						if(raffle.elegidos.indexOf(number) === -1 && result.fakes.indexOf(number) === -1) {
+							result.fakes.push(number);
+							contInt--;
+						}
+					}
+					contExt = false;
+				}
+			}
+		}
+		return result;
+	};
+
+	var generateNumber = function(min, max) {
+		return Math.floor(Math.random() * (max - min)) + min;
 	};
 
 	var authentication = function(request, response, next) {
@@ -100,7 +136,7 @@ module.exports = function(app, auth, io) {
 					for(; i<numeros.length; i++) {
 						if(/^\d+$/.test(numeros[i])) {
 							num = Number(numeros[i]);
-							resultado[num.toString()] = { asignado: null, pagado: false };
+							resultado[num.toString()] = { asignado: null, pagado: false, ganador: false };
 							arrNumeros.push(num.toString());
 						} else {
 							if(/^\d+-\d+$/.test(numeros[i])) {
@@ -109,7 +145,7 @@ module.exports = function(app, auth, io) {
 								n2 = Number(num[1]);
 								if(n1 <= n2) {
 									for(j=n1; j<=n2; j++) {
-										resultado[j.toString()] = { asignado: null, pagado: false };
+										resultado[j.toString()] = { asignado: null, pagado: false, ganador: false };
 										arrNumeros.push(j.toString());
 									}
 								}
@@ -155,6 +191,7 @@ module.exports = function(app, auth, io) {
 		if(raffle.state === "init" && raffle.identificador === id) {
 			io.sockets.on("connection", connection);
 			raffle.state = "waiting";
+			raffle.elegidos = [];
 			response.render("raffle-admin", {
 				nombre: raffle.nombre,
 				identificador: raffle.identificador,

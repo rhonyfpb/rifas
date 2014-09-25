@@ -93,6 +93,11 @@
 	$("#generar button").on("click", function() {
 		$("#modificar button, #modificar input").attr("disabled", "disabled");
 		$("#pagar button, #pagar input").attr("disabled", "disabled");
+		var button = $(this);
+		button.attr("disabled", "disabled");
+		setTimeout(function() {
+			button.removeAttr("disabled");
+		}, 3500);
 		socket.emit("generate number");
 	});
 
@@ -110,6 +115,18 @@
 		$("#" + numero + " .payment").text("pagado");
 		$("#pagado").val("");
 		$("#pagar button, #pagar input").removeAttr("disabled");
+	});
+
+	socket.on("generate number", function(ganador) {
+		var inputs = $("#generar input"), length = inputs.length, i = 0, input;
+		for(; i<length; i++) {
+			input = $(inputs[i]);
+			if(!input.val()) {
+				input.val(ganador);
+				break;
+			}
+		}
+		$("#" + ganador).addClass("ganador");
 	});
 
 	socket.on("status change", function(status) {

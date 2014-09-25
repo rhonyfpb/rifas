@@ -4,6 +4,18 @@
 	{{> numbers}}
 </div>
 <script>
+	(function($){
+		$.fn.visualizar = function(options) {
+			var ganador = options.ganador;
+			var falsos = options.falsos;
+			return this.each(function() {
+				var lista = $(this), i = 0;
+				$(".numero, lista", lista).addClass("not-visible");
+				return lista;
+			});
+		}
+	}(jQuery));
+
 	var socket = io.connect("/", {
 		reconnection: false
 	});
@@ -36,8 +48,16 @@
 			$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
 			$("#grupo-visualizacion").addClass("visible").removeClass("not-visible");
 		} else if(status === "generando") {
+			$("#contenedor-rifa").removeClass().addClass("generando");
 			$("#estado .value").text("generando");
 		}
+	});
+
+	socket.on("generate number", function(ganador, falsos) {
+		$("#grupo-visualizacion .lista-numeros").visualizar({
+			ganador: ganador,
+			falsos: falsos
+		});
 	});
 
 	$(document).ready(function() {
@@ -52,6 +72,9 @@
 				$("#grupo-visualizacion").addClass("not-visible").removeClass("visible");
 				break;
 			case "cerrada":
+				$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
+				break;
+			case "generando":
 				$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
 				break;
 		}

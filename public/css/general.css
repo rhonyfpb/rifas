@@ -10,3 +10,6 @@
 	-moz-column-count: 4;
 	column-count: 4;
 }
+.resultados .ganador {
+	border: solid 1px black;
+}
