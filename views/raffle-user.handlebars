@@ -8,11 +8,96 @@
 		$.fn.visualizar = function(options) {
 			var ganador = options.ganador;
 			var falsos = options.falsos;
-			return this.each(function() {
-				var lista = $(this), i = 0;
-				$(".numero, lista", lista).addClass("not-visible");
-				return lista;
+			var promesaGlobal;
+			var encolador = {
+				funciones: [],
+				insertar: function(tareas) {
+					var i = 0, tarea, funcion, contexto;
+					for(; i<tareas.length; i++) {
+						tarea = tareas[i];
+						funcion = tarea.shift();
+						contexto = tarea.shift();
+						this.funciones.push({ funcion: funcion, contexto: contexto, argumentos: tarea});
+					}
+				},
+				llamar: function(funcion, contexto, argumentos) {
+					return function() {
+						return funcion.apply(contexto, argumentos).promise();
+					};
+				},
+				ejecutar: function() {
+					var promesa = $.Deferred().resolve().promise(), i = 0;
+					for(; i<this.funciones.length; i++) {
+						promesa = promesa.then(this.llamar(this.funciones[i].funcion, this.funciones[i].contexto, this.funciones[i].argumentos));
+					}
+					return promesa;
+				}
+			};
+			this.each(function() {
+				var contenedor = $(this), i = 0, falso, promesa;
+				var numero = $(".numero", contenedor);
+				var lista = $(".lista", contenedor);
+				var falsosContenedor = $("<div></div>").css({
+					border: "solid 1px black",
+					lineHeight: "100px",
+					width: "100px",
+					textAlign: "center",
+					float: "left"
+				});
+				var falsosLength = falsos.length;
+
+				if(numero.length) {
+					numero.remove();
+				}
+				numero = $("<div />").addClass("numero");
+				numero.prependTo(contenedor);
+				
+				numero.addClass("not-visible");
+				lista.hide();
+
+				numero.text(ganador);
+				lista.append("<div>" + ganador + "</div>");
+
+				$("div", lista).css({
+					float: "left",
+					display: "inline-block",
+					lineHeight: "25px",
+					width: "25px",
+					border: "dotted 1px black",
+					textAlign: "center",
+					margin: "0px 5px"
+				});
+
+				for(; i<falsosLength; i++) {
+					$("<div>" + falsos[i] + "</div>").addClass("not-visible").appendTo(falsosContenedor);
+				}
+				falsosContenedor.appendTo(contenedor);
+
+				i = 0;
+				for(; i<falsosLength; i++) {
+					falso = $($("div", falsosContenedor).get(i));
+					encolador.insertar([
+						[falso.fadeIn, falso, { duration: 500 }],
+						[falso.fadeOut, falso, { duration: 500 }]
+					]);
+				}
+				promesaGlobal = encolador.ejecutar().then(function() {
+					falsosContenedor.remove();
+					numero.css({
+						border: "solid 1px black",
+						lineHeight: "100px",
+						width: "100px",
+						textAlign: "center",
+						fontSize: "xx-large",
+						float: "left"
+					}).fadeIn({ duration: 500 });
+					return lista.css({ float: "left" }).fadeIn({ duration: 500 }).promise();
+				});
+
+				return contenedor;
 			});
+			
+			return promesaGlobal;
 		}
 	}(jQuery));
 
@@ -57,6 +142,8 @@
 		$("#grupo-visualizacion .lista-numeros").visualizar({
 			ganador: ganador,
 			falsos: falsos
+		}).then(function() {
+			$("#" + ganador).addClass("ganador");
 		});
 	});
 
@@ -76,6 +163,10 @@
 				break;
 			case "generando":
 				$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
+				$(".lista div").each(function(i, element) {
+					element = $(element);
+					$("#" + element.text()).addClass("ganador");
+				});
 				break;
 		}
 

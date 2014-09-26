@@ -251,6 +251,7 @@ module.exports = function(app, auth, io) {
 				numeros: raffle.numeros,
 				resultado: raffle.resultado,
 				estado: raffle.state,
+				elegidos: raffle.elegidos,
 				helpers: {
 					increment: function(index) {
 						return typeof index === "number" ? index + 1 : Number(index) + 1;
@@ -294,6 +295,18 @@ module.exports = function(app, auth, io) {
 						} else {
 							return "no pagado";
 						}
+					},
+					list: function(elegidos) {
+						var i = 0, result = "";
+						if(elegidos.length > 0) {
+							result += "<div class=\"numero\" style=\"border: 1px solid black; line-height: 100px; width: 100px; text-align: center; font-size: xx-large; float: left; display: block;\">" + elegidos[elegidos.length-1] + "</div>\n";
+						}
+						result += "<div class=\"lista\">\n";
+						for(; i<elegidos.length; i++) {
+							result += "<div style=\"float: left; display: inline-block; line-height: 25px; width: 25px; border: 1px dotted black; text-align: center; margin: 0px 5px;\">" + elegidos[i] + "</div>\n";
+						}
+						result += "</div>\n";
+						return result;
 					}
 				}
 			});
