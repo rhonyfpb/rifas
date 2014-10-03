@@ -1,3 +1,5 @@
+var db = require("./db.js");
+
 module.exports = function(app, auth, io) {
 
 	var raffle = {};
@@ -90,6 +92,57 @@ module.exports = function(app, auth, io) {
 		}
 	};
 
+	var processAdmin = function(response) {
+		io.sockets.on("connection", connection);
+		raffle.state = "waiting";
+		raffle.elegidos = [];
+		response.render("raffle-admin", {
+			nombre: raffle.nombre,
+			identificador: raffle.identificador,
+			urlPublica: raffle.server + raffle.urlPublica,
+			urlAdmin: raffle.server + raffle.urlAdmin,
+			posibles: raffle.numeros.length,
+			ganadores: raffle.ganadores,
+			estado: raffle.state,
+			numeros: raffle.numeros,
+			resultado: raffle.resultado,
+			helpers: {
+				increment: function(index) {
+					return typeof index === "number" ? index + 1 : Number(index) + 1;
+				},
+				assign: function(result, number) {
+					var asignado;
+					if(result[number]) {
+						asignado = result[number].asignado;
+						return asignado === null ? "vacío" : asignado;
+					} else {
+						return "vacío";
+					}
+				},
+				state: function(estado) {
+					return estado === "waiting" ? "esperando" : "";
+				},
+				payment: function(result, number) {
+					var pagado;
+					if(result[number]) {
+						pagado = result[number].pagado;
+						return pagado ? "pagado" : "no pagado";
+					} else {
+						return "no pagado";
+					}
+				},
+				makeInputs: function(ganadores) {
+					var i = 0;
+					var result = "";
+					for(; i < ganadores; i++) {
+						result += "<input id=\"w" + (i+1) + "\" type=\"number\" disabled=\"disabled\" /> ";
+					}
+					return result;
+				}
+			}
+		});
+	};
+
 	app.get("/", function(request, response) {
 		response.render("home");
 	});
@@ -170,6 +223,8 @@ module.exports = function(app, auth, io) {
 					break;
 				case "iniciar":
 					raffle.state = "init";
+					
+					db.set(raffle.identificador, raffle);
 
 					response.json({
 						url: raffle.server + raffle.urlAdmin,
@@ -188,55 +243,8 @@ module.exports = function(app, auth, io) {
 	
 	app.get("/admin/:id", authentication, function(request, response) {
 		var id = request.params.id;
-		if(raffle.state === "init" && raffle.identificador === id) {
-			io.sockets.on("connection", connection);
-			raffle.state = "waiting";
-			raffle.elegidos = [];
-			response.render("raffle-admin", {
-				nombre: raffle.nombre,
-				identificador: raffle.identificador,
-				urlPublica: raffle.server + raffle.urlPublica,
-				urlAdmin: raffle.server + raffle.urlAdmin,
-				posibles: raffle.numeros.length,
-				ganadores: raffle.ganadores,
-				estado: raffle.state,
-				numeros: raffle.numeros,
-				resultado: raffle.resultado,
-				helpers: {
-					increment: function(index) {
-						return typeof index === "number" ? index + 1 : Number(index) + 1;
-					},
-					assign: function(result, number) {
-						var asignado;
-						if(result[number]) {
-							asignado = result[number].asignado;
-							return asignado === null ? "vacío" : asignado;
-						} else {
-							return "vacío";
-						}
-					},
-					state: function(estado) {
-						return estado === "waiting" ? "esperando" : "";
-					},
-					payment: function(result, number) {
-						var pagado;
-						if(result[number]) {
-							pagado = result[number].pagado;
-							return pagado ? "pagado" : "no pagado";
-						} else {
-							return "no pagado";
-						}
-					},
-					makeInputs: function(ganadores) {
-						var i = 0;
-						var result = "";
-						for(; i < ganadores; i++) {
-							result += "<input id=\"w" + (i+1) + "\" type=\"number\" disabled=\"disabled\" /> ";
-						}
-						return result;
-					}
-				}
-			});
+		if(/*raffle.state === "init" &&*/ raffle.identificador === id) {
+			processAdmin(response);
 		} else {
 			response.status(404);
 			response.render("404");
