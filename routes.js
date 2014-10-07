@@ -45,6 +45,12 @@ module.exports = function(app, auth, io) {
 			result = makeResult();
 			if(result.winner !== undefined) {
 				io.emit("generate number", result.winner, result.fakes);
+				if(raffle.elegidos.length === Number(raffle.ganadores)) {
+					raffle.state = "finished";
+					db.set(raffle.identificador, raffle).then(function() {
+						io.emit("status change", "terminada");
+					});
+				}
 			}
 		});
 
@@ -57,20 +63,22 @@ module.exports = function(app, auth, io) {
 				position = generateNumber(0, raffle.numeros.length);
 				number = raffle.numeros[position];
 				if(raffle.elegidos.indexOf(number) === -1) {
-					raffle.elegidos.push(number);
-					raffle.resultado[number].ganador = true;
-					result.winner = number;
-					result.fakes = [];
-					contInt = 2;
-					while(contInt > 0) {
-						position = generateNumber(0, raffle.numeros.length);
-						number = raffle.numeros[position];
-						if(raffle.elegidos.indexOf(number) === -1 && result.fakes.indexOf(number) === -1) {
-							result.fakes.push(number);
-							contInt--;
+					if(raffle.resultado[number].pagado === true && raffle.resultado[number].asignado !== null) {
+						raffle.elegidos.push(number);
+						raffle.resultado[number].ganador = true;
+						result.winner = number;
+						result.fakes = [];
+						contInt = 2;
+						while(contInt > 0) {
+							position = generateNumber(0, raffle.numeros.length);
+							number = raffle.numeros[position];
+							if(raffle.elegidos.indexOf(number) === -1 && result.fakes.indexOf(number) === -1) {
+								result.fakes.push(number);
+								contInt--;
+							}
 						}
+						contExt = false;
 					}
-					contExt = false;
 				}
 			}
 		}
@@ -224,12 +232,12 @@ module.exports = function(app, auth, io) {
 				case "iniciar":
 					raffle.state = "init";
 					
-					db.set(raffle.identificador, raffle);
-
-					response.json({
-						url: raffle.server + raffle.urlAdmin,
-						status: "ok",
-						init: true
+					db.set(raffle.identificador, raffle).then(function() {
+						response.json({
+							url: raffle.server + raffle.urlAdmin,
+							status: "ok",
+							init: true
+						});
 					});
 					break;
 				default:
@@ -243,17 +251,22 @@ module.exports = function(app, auth, io) {
 	
 	app.get("/admin/:id", authentication, function(request, response) {
 		var id = request.params.id;
-		if(/*raffle.state === "init" &&*/ raffle.identificador === id) {
+		if(raffle.identificador === id) {
 			processAdmin(response);
 		} else {
-			response.status(404);
-			response.render("404");
+			db.get(id).then(function(obj) {
+				raffle = obj;
+				processAdmin(response);
+			}, function() {
+				response.status(404);
+				response.render("404");
+			});
 		}
 	});
 
 	app.get("/rifa/:id", function(request, response) {
 		var id = request.params.id;
-		if((raffle.state === "waiting" || raffle.state === "open" || raffle.state === "sealed" || raffle.state === "generating") && raffle.identificador === id) {
+		if((raffle.state === "waiting" || raffle.state === "open" || raffle.state === "sealed" || raffle.state === "generating" || raffle.state === "finished") && raffle.identificador === id) {
 			io.sockets.on("connection", connection);
 			response.render("raffle-user", {
 				numeros: raffle.numeros,
@@ -282,6 +295,8 @@ module.exports = function(app, auth, io) {
 							return "cerrada";
 						} else if(estado === "generating") {
 							return "generando";
+						} else if(estado === "finished") {
+							return "terminada";
 						} else {
 							return "";
 						}

@@ -76,8 +76,10 @@
 		var numero = numeroCtrl.val();
 		var asignado = asignadoCtrl.val();
 		if(numero && asignado) {
-			$("#modificar button, #modificar input").attr("disabled", "disabled");
-			socket.emit("admin number change", numero, asignado);
+			if($("#" + numero + " .assign").length) {
+				$("#modificar button, #modificar input").attr("disabled", "disabled");
+				socket.emit("admin number change", numero, asignado);
+			}
 		}
 	});
 
@@ -85,8 +87,10 @@
 		var numeroCtrl = $("#pagado");
 		var numero = numeroCtrl.val();
 		if(numero) {
-			$("#pagar button, #pagar input").attr("disabled", "disabled");
-			socket.emit("number payment", numero);
+			if($("#" + numero + " .assign").length) {
+				$("#pagar button, #pagar input").attr("disabled", "disabled");
+				socket.emit("number payment", numero);
+			}
 		}
 	});
 
@@ -96,7 +100,9 @@
 		var button = $(this);
 		button.attr("disabled", "disabled");
 		setTimeout(function() {
-			button.removeAttr("disabled");
+			if(!$("#generar input").last().val()) {
+				button.removeAttr("disabled");
+			}
 		}, 3500);
 		socket.emit("generate number");
 	});
@@ -142,6 +148,9 @@
 			$("#generar button").removeAttr("disabled");
 		} else if(status === "generando") {
 			$("#estado .value").text("generando");
+		} else if(status === "terminada") {
+			$("#estado .value").text("terminada");
+			$("#generar button").attr("disabled", "disabled");
 		}
 	});
 </script>

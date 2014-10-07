@@ -135,6 +135,9 @@
 		} else if(status === "generando") {
 			$("#contenedor-rifa").removeClass().addClass("generando");
 			$("#estado .value").text("generando");
+		} else if(status === "terminada") {
+			$("#contenedor-rifa").removeClass().addClass("terminada");
+			$("#estado .value").text("terminada");
 		}
 	});
 
@@ -162,6 +165,13 @@
 				$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
 				break;
 			case "generando":
+				$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
+				$(".lista div").each(function(i, element) {
+					element = $(element);
+					$("#" + element.text()).addClass("ganador");
+				});
+				break;
+			case "terminada":
 				$("#seleccion").closest(".control").addClass("not-visible").removeClass("visible");
 				$(".lista div").each(function(i, element) {
 					element = $(element);
