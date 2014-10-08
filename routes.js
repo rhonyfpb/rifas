@@ -152,7 +152,13 @@ module.exports = function(app, auth, io) {
 	};
 
 	app.get("/", function(request, response) {
-		response.render("home");
+		var hayRifa = raffle && raffle.identificador ? true : false;
+		var url = hayRifa && raffle.urlPublica ? raffle.server + raffle.urlPublica : "";
+		response.render("home", {
+			hayRifa: hayRifa,
+			url: url,
+			nombre: raffle.nombre
+		});
 	});
 
 	app.get("/admin", authentication, function(request, response) {

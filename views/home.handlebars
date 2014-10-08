@@ -1,7 +1,12 @@
-<h1>Bienvenido a la rifa</h1>
+<h1>Rifas</h1>
 <div>
-	<a href="/admin">Ingresa al configurador</a>
+	<a href="/admin">Administrar</a>
 </div>
+{{#if hayRifa}}
+{{#if url}}
 <div>
-	<h2>Rifas en curso</h2>
+	<h2>Rifa en curso</h2>
+	<a href="{{url}}">{{nombre}}</a>
 </div>
+{{/if}}
+{{/if}}

@@ -13,3 +13,13 @@
 .resultados .ganador {
 	border: solid 1px black;
 }
+
+/* extra small devices */
+@media only screen and (max-width: 767px) {
+	/* */
+}
+
+/* small devices */
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+	/* */
+}
