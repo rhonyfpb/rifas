@@ -1,22 +1,22 @@
 <script src="../socket.io/socket.io.js"></script>
-<h1>Administrador de la rifa</h1>
+<h1>Administrador</h1>
 <fieldset>
-	<legend>Datos de la rifa</legend>
+	<legend>Datos</legend>
 	<div class="control">
-		<span class="key">Nombre de la rifa:</span>
+		<span class="key">Nombre:</span>
 		<span class="value">{{nombre}}</span>
 	</div>
 	<div class="control">
-		<span class="key">Identificador de la rifa:</span>
+		<span class="key">Identificador:</span>
 		<span class="value">{{identificador}}</span>
 	</div>
 	<div class="control">
 		<span class="key">URL pública:</span>
-		<span class="value">{{urlPublica}}</span>
+		<span class="value"><a href="{{urlPublica}}">{{urlPublica}}</a></span>
 	</div>
 	<div class="control">
 		<span class="key">URL administrativa:</span>
-		<span class="value">{{urlAdmin}}</span>
+		<span class="value"><a href="{{urlAdmin}}">{{urlAdmin}}</a></span>
 	</div>
 	<div class="control">
 		<span class="key">Números posibles:</span>
@@ -28,7 +28,7 @@
 	</div>
 </fieldset>
 <fieldset>
-	<legend>Control de la rifa</legend>
+	<legend>Control</legend>
 	<div class="control" id="estado">
 		<span class="key">Estado de la rifa:</span>
 		<span class="value">{{state estado}}</span>
