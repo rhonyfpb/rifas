@@ -75,6 +75,12 @@
 		text-decoration: none;
 		text-shadow: 1px 0px 2px rgb(31, 132, 239);
 	}
+	.control button:disabled {
+		border: 1px solid rgb(134, 134, 134);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(177, 177, 177)), color-stop(50%, rgb(162, 162, 162)), color-stop(51%, rgb(146, 146, 146)), color-stop(100%, rgb(119, 119, 119)));
+		color: rgb(255, 255, 255);
+		text-shadow: 1px 0px 2px rgb(134, 134, 134);
+	}
 
 }
 
