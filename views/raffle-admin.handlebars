@@ -108,7 +108,9 @@
 	});
 
 	socket.on("number change", function(numero, asignado) {
-		$("#" + numero + " .assign").text(asignado);
+		var number = $("#" + numero + " .assign");
+		number.removeClass("empty");
+		number.text(asignado);
 	});
 
 	socket.on("admin number change", function(numero, asignado) {
@@ -118,7 +120,9 @@
 	});
 
 	socket.on("number payment", function(numero) {
-		$("#" + numero + " .payment").text("pagado");
+		var number = $("#" + numero + " .payment");
+		number.removeClass("not-payed").addClass("payed");
+		number.text("pagado");
 		$("#pagado").val("");
 		$("#pagar button, #pagar input").removeAttr("disabled");
 	});

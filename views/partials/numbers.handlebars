@@ -5,8 +5,8 @@
 		<div class="num" id="{{this}}">
 			<span class="pos">{{#increment @index}} {{/increment}}</span>
 			<span class="number">{{this}}</span>
-			<span class="assign">{{#assign ../resultado this}} {{/assign}}</span>
-			<span class="payment">{{#payment ../resultado this}} {{/payment}}</span>
+			{{#assign ../resultado this}} {{/assign}}
+			{{#payment ../resultado this}} {{/payment}}
 		</div>
 	{{/each}}
 	</div>
