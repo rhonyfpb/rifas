@@ -97,7 +97,7 @@
 		margin-top: 4px;
 		margin-bottom: 4px;
 	}
-	.control input[type=number] {
+	.control input[type=number], .control select {
 		width: 50px;
 	}
 	.resultados .num {
@@ -145,6 +145,30 @@
 	}
 	.resultados .num .payment.payed {
 		background: url("../img/wallet-full.png") no-repeat;
+	}
+	.resultados .num.ganador {
+		border: 2px solid rgb(0, 0, 128);
+		background-color: rgb(224, 255, 255);
+	}
+	.lista-numeros .lista .result {
+		float: left;
+		display: inline-block;
+		line-height: 30px;
+		width: 30px;
+		border: solid 2px rgb(0, 0, 128);
+		background-color: rgb(224, 255, 255);
+		text-align: center;
+		margin: 0px 5px;
+		font-size: x-large;
+	}
+	.lista-numeros .falsy {
+		border: solid 2px rgb(0, 0, 128);
+		background-color: rgb(255, 245, 238);
+		line-height: 100px;
+		width: 100px;
+		text-align: center;
+		font-size: xx-large;
+		float: left;
 	}
 
 }

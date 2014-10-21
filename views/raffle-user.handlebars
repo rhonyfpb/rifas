@@ -37,13 +37,7 @@
 				var contenedor = $(this), i = 0, falso, promesa;
 				var numero = $(".numero", contenedor);
 				var lista = $(".lista", contenedor);
-				var falsosContenedor = $("<div></div>").css({
-					border: "solid 1px black",
-					lineHeight: "100px",
-					width: "100px",
-					textAlign: "center",
-					float: "left"
-				});
+				var falsosContenedor = $("<div></div>").addClass("falsy");
 				var falsosLength = falsos.length;
 
 				if(numero.length) {
@@ -58,15 +52,7 @@
 				numero.text(ganador);
 				lista.append("<div>" + ganador + "</div>");
 
-				$("div", lista).css({
-					float: "left",
-					display: "inline-block",
-					lineHeight: "25px",
-					width: "25px",
-					border: "dotted 1px black",
-					textAlign: "center",
-					margin: "0px 5px"
-				});
+				$("div", lista).addClass("result");
 
 				for(; i<falsosLength; i++) {
 					$("<div>" + falsos[i] + "</div>").addClass("not-visible").appendTo(falsosContenedor);
@@ -83,14 +69,7 @@
 				}
 				promesaGlobal = encolador.ejecutar().then(function() {
 					falsosContenedor.remove();
-					numero.css({
-						border: "solid 1px black",
-						lineHeight: "100px",
-						width: "100px",
-						textAlign: "center",
-						fontSize: "xx-large",
-						float: "left"
-					}).fadeIn({ duration: 500 });
+					numero.addClass("falsy").fadeIn({ duration: 500 });
 					return lista.css({ float: "left" }).fadeIn({ duration: 500 }).promise();
 				});
 
@@ -114,12 +93,16 @@
 	});
 
 	socket.on("number change", function(numero, asignado) {
-		$("#" + numero + " .assign").text(asignado);
+		var number = $("#" + numero + " .assign");
+		number.removeClass("empty");
+		number.text(asignado);
 		$("#seleccion option[value=" + numero + "]").attr("disabled", "disabled");
 	});
 
 	socket.on("number payment", function(numero) {
-		$("#" + numero + " .payment").text("pagado");
+		var number = $("#" + numero + " .payment");
+		number.removeClass("not-payed").addClass("payed");
+		number.text("pagado");
 	});
 
 	socket.on("status change", function(status) {

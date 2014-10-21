@@ -293,13 +293,16 @@ module.exports = function(app, auth, io) {
 						return typeof index === "number" ? index + 1 : Number(index) + 1;
 					},
 					assign: function(result, number) {
-						var asignado;
+						var asignado, _class = "assign", text = "vacío";
 						if(result[number]) {
 							asignado = result[number].asignado;
-							return asignado === null ? "vacío" : asignado;
-						} else {
-							return "vacío";
+							if(asignado === null) {
+								_class += " empty";
+							} else {
+								text = asignado;
+							}
 						}
+						return "<span class=\"" + _class + "\">" + text + "</span>";
 					},
 					state: function(estado) {
 						if(estado === "waiting") {
@@ -326,13 +329,19 @@ module.exports = function(app, auth, io) {
 						}
 					},
 					payment: function(result, number) {
-						var pagado;
+						var pagado, _class = "payment", text = "no pagado";
 						if(result[number]) {
 							pagado = result[number].pagado;
-							return pagado ? "pagado" : "no pagado";
+							if(pagado) {
+								_class += " payed";
+								text = "pagado";
+							} else {
+								_class += " not-payed";
+							}
 						} else {
-							return "no pagado";
+							_class += " not-payed";
 						}
+						return "<span class=\"" + _class + "\">" + text + "</span>";
 					},
 					list: function(elegidos) {
 						var i = 0, result = "";
