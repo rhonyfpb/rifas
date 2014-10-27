@@ -173,7 +173,43 @@
 
 }
 
-/* small devices */
-@media only screen and (min-width: 768px) and (max-width: 1023px) {
-	/* */
+/* desktop devices */
+@media only screen and (min-width: 768px) {
+	
+	body {
+		margin: 0 auto;
+		width: 96%;
+		width: -webkit-calc(100% - 2em);
+		text-align: center;
+	}
+	fieldset {
+		width: -webkit-calc(48% - 2em);
+		float: left;
+		min-height: 260px;
+		margin: 6px;
+		border-radius: 0 10px 0 10px;
+		box-shadow: 3px 3px 2px rgb(192, 192, 192);
+		text-align: left;
+	}
+	fieldset > legend {
+		border: solid 1px rgb(192, 192, 192);
+		width: -webkit-calc(70% - 2em);
+		line-height: 30px;
+		background-color: rgb(0, 0, 128);
+		color: rgb(255, 255, 255);
+		text-transform: uppercase;
+		font-weight: bold;
+		border-radius: 6px;
+		text-align: center;
+	}
+	fieldset > .control {
+		position: relative;
+		border: solid 1px black;
+		line-height: 30px;
+		margin: 4px 0;
+	}
+	fieldset > .control > .key {
+		
+	}
+
 }
