@@ -5,15 +5,6 @@
 	display: none;
 }
 
-/*.resultados {
-	-webkit-column-count: 4;
-	-moz-column-count: 4;
-	column-count: 4;
-}*/
-.resultados .ganador {
-	border: solid 1px black;
-}
-
 /* extra small devices */
 @media only screen and (max-width: 767px) {
 	
@@ -204,12 +195,123 @@
 	}
 	fieldset > .control {
 		position: relative;
-		border: solid 1px black;
+		border: solid 1px rgb(192, 192, 192);
 		line-height: 30px;
-		margin: 4px 0;
+		margin: 6px 0;
+		border-radius: 0 6px 0 6px;
+		padding: 6px;
+		background-color: rgb(255, 245, 238);
 	}
 	fieldset > .control > .key {
-		
+		display: inline-block;
+		width: 130px;
+		vertical-align: middle;
+		text-transform: uppercase;
+		font-size: small;
+		font-weight: bold;
+	}
+	fieldset > .control > .value {
+
+	}
+	fieldset > .control button {
+		margin: 5px 0;
+		border: 1px solid rgb(31, 132, 239);
+		padding: 0 30px;
+		line-height: 30px;
+		border-radius: 6px;
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(109, 179, 242)), color-stop(50%, rgb(84, 163, 238)), color-stop(51%, rgb(54, 144, 240)), color-stop(100%, rgb(30, 105, 222)));
+		color: rgb(255, 255, 254);
+		text-decoration: none;
+		text-shadow: 1px 0px 2px rgb(31, 132, 239);
+	}
+	fieldset > .control button:disabled {
+		border: 1px solid rgb(134, 134, 134);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(177, 177, 177)), color-stop(50%, rgb(162, 162, 162)), color-stop(51%, rgb(146, 146, 146)), color-stop(100%, rgb(119, 119, 119)));
+		color: rgb(255, 255, 255);
+		text-shadow: 1px 0px 2px rgb(134, 134, 134);
+	}
+	fieldset > .control label {
+		display: block;
+	}
+	fieldset .resultados {
+		-webkit-column-count: 2;
+		-moz-column-count: 2;
+		column-count: 2;
+	}
+	.resultados {
+		text-align: center;
+	}
+	.resultados .num {
+		display: inline-block;
+		border: 1px solid rgb(192, 192, 192);
+		margin: 4px;
+		border-radius: 0 4px 0 4px;
+		padding: 4px;
+	}
+	.resultados .num > span {
+		vertical-align: middle;
+	}
+	.resultados .num .pos {
+		color: rgb(192, 192, 192);
+		font-size: x-small;
+		display: inline-block;
+		width: 12px;
+	}
+	.resultados .num .number {
+		font-size: x-large;
+		display: inline-block;
+		width: 40px;
+	}
+	.resultados .num .assign {
+		display: inline-block;
+		max-width: 100px;
+		max-height: 32px;
+		overflow: hidden;
+		font-size: small;
+	}
+	.resultados .num .assign.empty {
+		background: url("../img/add.png") no-repeat;
+		width: 16px;
+		height: 16px;
+		overflow: hidden;
+		color: transparent;
+	}
+	.resultados .num .payment {
+		display: inline-block;
+		width: 32px;
+		height: 32px;
+		overflow: hidden;
+		color: transparent;
+	}
+	.resultados .num .payment.not-payed {
+		background: url("../img/wallet-empty.png") no-repeat;
+	}
+	.resultados .num .payment.payed {
+		background: url("../img/wallet-full.png") no-repeat;
+	}
+	.resultados .num.ganador {
+		border: 2px solid rgb(0, 0, 128);
+		background-color: rgb(224, 255, 255);
+	}
+	.lista-numeros .lista .result {
+		float: left;
+		display: inline-block;
+		line-height: 30px;
+		width: 30px;
+		border: solid 2px rgb(0, 0, 128);
+		background-color: rgb(224, 255, 255);
+		text-align: center;
+		margin: 0px 5px;
+		font-size: x-large;
+	}
+	.lista-numeros .falsy {
+		border: solid 2px rgb(0, 0, 128);
+		background-color: rgb(255, 245, 238);
+		line-height: 100px;
+		width: 100px;
+		text-align: center;
+		font-size: xx-large;
+		float: left;
 	}
 
 }
